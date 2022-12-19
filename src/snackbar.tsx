@@ -1,16 +1,14 @@
-import { createContext, useContext, useState, useMemo, useRef } from 'react';
-import { View, StyleSheet, TouchableHighlight } from 'react-native';
-import { useTheme, makeStyles, Theme } from '@rneui/themed';
-import color from 'color';
+import { makeStyles } from "@rneui/themed";
+import color from "color";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { Animated, TouchableOpacity, View } from "react-native";
 
 type SnackBarActon = {
   onClick: () => void;
   icon: string;
 };
-type SnackBarActons = (SnackBarActon | ((id: number) => SnackBarActon))[]
+type SnackBarActons = (SnackBarActon | ((id: number) => SnackBarActon))[];
 type Show = {
-  // (title: string): number;
-  // (title: string, timeout: number): number;
   (title: string, actions?: SnackBarActons): number;
   (title: string, timeout?: number, actions?: SnackBarActons): number;
 };
@@ -33,98 +31,125 @@ type ShowParams = {
   actions?: SnackBarActon[];
 };
 
-export const SnackProvider = ({ children }: any) => {
+export const SnackProvider = ({
+  children,
+  manualHide,
+  timeout = 5000,
+}: {
+  children: React.ReactNode;
+  manualHide?: boolean;
+  timeout?: number;
+}) => {
   const [state, setState] = useState<Record<number, ShowParams>>({});
   const idCounter = useRef(0);
+  const styles = useStyles();
 
-  const hide: ContextType['hide'] = (id) => {
+  const hide: ContextType["hide"] = (id) => {
     setState((a) => {
       const prevState = { ...a };
-      console.log(id, prevState);
       if (prevState[id]) delete prevState[id];
       return prevState;
     });
   };
-
+  // @ts-ignore
   const show: Show = (title, param2, param3) => {
     const id = idCounter.current++;
-    const timeout = typeof param2 === 'number' ? param2 : 5000;
-    const actions = (typeof param2 === 'object' ? param2 : param3)?.map(
-      (action) => (typeof action === 'function' ? action(id) : action)
+    const timeoutSecs = typeof param2 === "number" ? param2 : timeout;
+    const actions = (typeof param2 === "object" ? param2 : param3)?.map(
+      (action) => (typeof action === "function" ? action(id) : action)
     );
     setState((prev) => ({
       ...prev,
       [id]: {
         title,
         actions,
-        timeout,
       },
     }));
-    setTimeout(() => hide(id), timeout);
+    if (!manualHide) setTimeout(() => hide(id), timeoutSecs);
     return id;
   };
 
   return (
     <SnackBarContext.Provider value={{ show, hide }}>
       {children}
-      <View style={styless.container} pointerEvents="none">
-        {Object.entries([]).map(([id, props]) => (
-          <SnackBar key={id} id={id as unknown as number} {...props} />
+      <View style={styles.container} pointerEvents="none">
+        {Object.entries(state).map(([id, props]) => (
+          <SnackBar styles={styles} id={Number(id)} key={id} {...props} />
         ))}
       </View>
-      {JSON.stringify(state)}
+      {JSON.stringify({ state })}
     </SnackBarContext.Provider>
   );
 };
 
 export const SnackBar = ({
   title,
-  id,
   actions,
-}: ShowParams & { id: number }) => {
-  const styles = useStyles();
+  styles,
+}: ShowParams & { id: number; styles: any }) => {
+  const ref = useRef(new Animated.Value(0));
+  useEffect(() => {
+    Animated.timing(ref.current, {
+      toValue: 1,
+      useNativeDriver: true,
+      duration: 300,
+    }).start();
+  }, []);
+
   return (
-    <View style={styles.snackbar} pointerEvents="box-only">
+    <Animated.View
+      style={[
+        {
+          opacity: ref.current.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 1],
+          }),
+        },
+        styles.snackbar,
+      ]}
+      pointerEvents="box-only"
+    >
       <View style={styles.content}>{title}</View>
-      {JSON.stringify(actions)}
-    </View>
+      <View style={styles.actions}>
+        {actions?.map(({ icon, onClick }) => (
+          <View style={styles.action} pointerEvents="box-none">
+            <TouchableOpacity onPress={onClick}>{icon}</TouchableOpacity>
+          </View>
+        ))}
+      </View>
+    </Animated.View>
   );
 };
 
-/**
- * {actions?.map((action) => {
-        // const { icon = 'X', onClick } =
-        //   typeof action === 'function' ? action(id) : action;
-        return <TouchableHighlight style={styles.action}>x</TouchableHighlight>;
-      })}
- */
-
-const styless = StyleSheet.create({
+const useStyles = makeStyles((theme) => ({
   container: {
-    position: 'absolute',
+    // position: 'absolute',
     // top: Dimensions.get('window').height - 100,
     // backgroundColor: '#0f02',
-    width: '100%',
+    width: "100%",
     paddingHorizontal: 20,
   },
-});
-
-const useStyles = makeStyles((theme: { colors: { primary: any } }) => ({
   snackbar: {
-    backgroundColor: color(theme.colors.primary).lighten(0.6),
+    backgroundColor: color(theme.colors.primary).lighten(0.6).toString(),
+    s: console.log(Math.random()),
+    borderWidth: 1,
+    borderColor: color(theme.colors.primary).lighten(0.2).toString(),
     paddingHorizontal: 10,
     paddingVertical: 8,
     color: theme.colors.primary,
     borderRadius: 4,
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginVertical: 4,
   },
   content: {},
   action: {
-    borderLeftColor: '#f005',
-    borderLeftWidth: 1,
-    paddingLeft: 10,
+    // borderLeftColor: '#f005',
+    // borderLeftWidth: 1,
+    // paddingLeft: 10,
+  },
+  actions: {
+    flexDirection: "row",
   },
 }));

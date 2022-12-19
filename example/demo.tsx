@@ -1,25 +1,27 @@
-import { SnackProvider, useSnackBar } from './Provider';
-import { ThemeProvider } from '@rneui/themed';
+import React from "react";
+import { SnackProvider, useSnackBar } from "../src/snackbar";
+import { ThemeProvider, Button } from "@rneui/themed";
 
 const MyChild = () => {
   const { show, hide } = useSnackBar();
   return (
-    <button
-      onClick={() => {
-        show('this is demo');
-        show('this is demo', [
+    <Button
+      onPress={() => {
+        show("this is demo");
+        show("this is demo", [
           {
-            icon: 'dmeo',
-            onClick: () => console.log('yo'),
+            icon: "dmeo",
+            onClick: () => console.log("yo"),
           },
           (id) => ({
-            icon: 'demoe',
-            onClick: ()=>hide(id),
+            icon: "demoe",
+            onClick: () => hide(id),
           }),
         ]);
-      }}>
+      }}
+    >
       Toast
-    </button>
+    </Button>
   );
 };
 
