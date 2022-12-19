@@ -7,6 +7,10 @@
   "author": "Arpit Bhalla <55053424+arpitBhalla@users.noreply.github.com>",
   "license": "MIT",
   "private": false,
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
   "files": [
     "dist"
   ],
