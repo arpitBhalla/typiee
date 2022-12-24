@@ -5,8 +5,13 @@ import {
   withSnackbar,
   PropsWithSnackbar,
 } from "./src";
-import { ThemeProvider, Button } from "@rneui/themed";
+import Button from "@rneui/themed/dist/Button";
+import {
+  ThemeProvider,
+  createTheme,
+} from "@rneui/themed/dist/config/ThemeProvider";
 import { Snackbar } from "./src/types";
+import { Text, View } from "react-native";
 
 const Base = ({ snackbar, name }: { snackbar: Snackbar; name: string }) => (
   <Button
@@ -24,7 +29,7 @@ const Base = ({ snackbar, name }: { snackbar: Snackbar; name: string }) => (
       // ]);
     }}
   >
-    {name || "Press"}
+    <Text>{name || "Press"}</Text>
   </Button>
 );
 
@@ -47,11 +52,20 @@ const Hook = () => {
 
 export default function App() {
   return (
-    <ThemeProvider>
+    <ThemeProvider theme={createTheme({ mode: "dark" })}>
       <SnackProvider>
-        <HOC />
-        <Class />
-        <Hook />
+        <View
+          style={{
+            height: 200,
+            marginTop: 150,
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <HOC />
+          <Class />
+          <Hook />
+        </View>
       </SnackProvider>
     </ThemeProvider>
   );

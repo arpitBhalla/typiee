@@ -1,8 +1,14 @@
-import { makeStyles } from "@rneui/themed";
+import { makeStyles } from "@rneui/themed/dist/config/makeStyles";
 import color from "color";
 import { useEffect, useRef, useState } from "react";
-import { Animated, TouchableOpacity, View, StyleSheet } from "react-native";
-import { SnackBarContext } from "./SnackBarContext";
+import {
+  Animated,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  Text,
+} from "react-native";
+import { SnackBarContext } from "./SnackbarContext";
 import { SnackbarProviderProps, ShowParams, Show, Snackbar } from "./types";
 
 export const SnackProvider = ({
@@ -59,7 +65,7 @@ export const SnackProvider = ({
           />
         ))}
       </View>
-      {JSON.stringify({ state })}
+      <Text>{JSON.stringify({ state })}</Text>
     </SnackBarContext.Provider>
   );
 };
@@ -92,7 +98,9 @@ export const SnackbarItem = ({
       ]}
       pointerEvents="box-only"
     >
-      <View style={[styles.content, themedStyles.content]}>{title}</View>
+      <View style={[styles.content, themedStyles.content]}>
+        <Text>{title}</Text>
+      </View>
       <View style={[styles.actionContainer, themedStyles.actions]}>
         {actions?.map(({ icon, onClick }) => (
           <View style={styles.action} pointerEvents="box-none">
@@ -108,7 +116,7 @@ const styles = StyleSheet.create({
   container: {
     // position: 'absolute',
     // top: Dimensions.get('window').height - 100,
-    // backgroundColor: '#0f02',
+    backgroundColor: "#0f02",
     width: "100%",
     paddingHorizontal: 20,
   },
