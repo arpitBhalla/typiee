@@ -1,50 +1,27 @@
 import { makeStyles } from "@rneui/themed";
 import color from "color";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { Animated, TouchableOpacity, View } from "react-native";
-
-type SnackBarActon = {
-  onClick: () => void;
-  icon: string;
-};
-type SnackBarActons = (SnackBarActon | ((id: number) => SnackBarActon))[];
-type Show = {
-  (title: string, actions?: SnackBarActons): number;
-  (title: string, timeout?: number, actions?: SnackBarActons): number;
-};
-
-type ContextType = {
-  show: Show;
-  hide: (id: number) => void;
-};
-
-const SnackBarContext = createContext<ContextType>({
-  show: () => -1,
-  hide: () => {},
-});
-
-export const useSnackBar = () => useContext(SnackBarContext);
-
-type ShowParams = {
-  timeout?: number;
-  title: string;
-  actions?: SnackBarActon[];
-};
+import { useEffect, useRef, useState } from "react";
+import { Animated, TouchableOpacity, View, StyleSheet } from "react-native";
+import { SnackBarContext } from "./SnackBarContext";
+import { SnackbarProviderProps, ShowParams, Show, Snackbar } from "./types";
 
 export const SnackProvider = ({
   children,
   manualHide,
-  timeout = 5000,
-}: {
-  children: React.ReactNode;
-  manualHide?: boolean;
-  timeout?: number;
-}) => {
+  autoHideDuration = 5000,
+  origin = {
+    horizontal: "left",
+    vertical: "bottom",
+  },
+  dense = false,
+  maxSnack = 3,
+  variant = "default",
+}: React.PropsWithChildren<SnackbarProviderProps>) => {
   const [state, setState] = useState<Record<number, ShowParams>>({});
   const idCounter = useRef(0);
-  const styles = useStyles();
+  const themedStyles = useStyles();
 
-  const hide: ContextType["hide"] = (id) => {
+  const hide: Snackbar["hide"] = (id) => {
     setState((a) => {
       const prevState = { ...a };
       if (prevState[id]) delete prevState[id];
@@ -54,7 +31,7 @@ export const SnackProvider = ({
   // @ts-ignore
   const show: Show = (title, param2, param3) => {
     const id = idCounter.current++;
-    const timeoutSecs = typeof param2 === "number" ? param2 : timeout;
+    const timeoutSecs = typeof param2 === "number" ? param2 : autoHideDuration;
     const actions = (typeof param2 === "object" ? param2 : param3)?.map(
       (action) => (typeof action === "function" ? action(id) : action)
     );
@@ -74,7 +51,12 @@ export const SnackProvider = ({
       {children}
       <View style={styles.container} pointerEvents="none">
         {Object.entries(state).map(([id, props]) => (
-          <SnackBar styles={styles} id={Number(id)} key={id} {...props} />
+          <SnackbarItem
+            themedStyles={themedStyles}
+            id={Number(id)}
+            key={id}
+            {...props}
+          />
         ))}
       </View>
       {JSON.stringify({ state })}
@@ -82,12 +64,13 @@ export const SnackProvider = ({
   );
 };
 
-export const SnackBar = ({
+export const SnackbarItem = ({
   title,
   actions,
-  styles,
-}: ShowParams & { id: number; styles: any }) => {
+  themedStyles,
+}: ShowParams & { id: number; themedStyles: any }) => {
   const ref = useRef(new Animated.Value(0));
+
   useEffect(() => {
     Animated.timing(ref.current, {
       toValue: 1,
@@ -105,12 +88,12 @@ export const SnackBar = ({
             outputRange: [0, 1],
           }),
         },
-        styles.snackbar,
+        themedStyles.snackbar,
       ]}
       pointerEvents="box-only"
     >
-      <View style={styles.content}>{title}</View>
-      <View style={styles.actions}>
+      <View style={[styles.content, themedStyles.content]}>{title}</View>
+      <View style={[styles.actionContainer, themedStyles.actions]}>
         {actions?.map(({ icon, onClick }) => (
           <View style={styles.action} pointerEvents="box-none">
             <TouchableOpacity onPress={onClick}>{icon}</TouchableOpacity>
@@ -121,7 +104,7 @@ export const SnackBar = ({
   );
 };
 
-const useStyles = makeStyles((theme) => ({
+const styles = StyleSheet.create({
   container: {
     // position: 'absolute',
     // top: Dimensions.get('window').height - 100,
@@ -130,26 +113,29 @@ const useStyles = makeStyles((theme) => ({
     paddingHorizontal: 20,
   },
   snackbar: {
-    backgroundColor: color(theme.colors.primary).lighten(0.6).toString(),
-    s: console.log(Math.random()),
-    borderWidth: 1,
-    borderColor: color(theme.colors.primary).lighten(0.2).toString(),
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    color: theme.colors.primary,
     borderRadius: 4,
-    width: "100%",
+    borderWidth: 1,
     flexDirection: "row",
     justifyContent: "space-between",
     marginVertical: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    width: "100%",
   },
   content: {},
+  actionContainer: {
+    flexDirection: "row",
+  },
   action: {
     // borderLeftColor: '#f005',
     // borderLeftWidth: 1,
     // paddingLeft: 10,
   },
-  actions: {
-    flexDirection: "row",
+});
+const useStyles = makeStyles((theme) => ({
+  snackbar: {
+    backgroundColor: color(theme.colors.primary).lighten(0.6).toString(),
+    borderColor: color(theme.colors.primary).lighten(0.2).toString(),
+    color: theme.colors.primary,
   },
 }));

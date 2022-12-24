@@ -1,6 +1,7 @@
 {
-  "name": "@arpitbhalla/snackbar",
+  "name": "@arpitbhalla/react-native",
   "version": "0.0.0-alpha.0",
+  "private": true,
   "description": "SnackBar Component for React Native",
   "main": "dist/index.js",
   "repository": "git@github.com:arpitBhalla/rnsnackbar.git",
