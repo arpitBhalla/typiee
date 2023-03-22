@@ -1,8 +1,8 @@
-import { Roboto } from "next/font/google";
+import { Noto_Sans } from "next/font/google";
 import { createTheme } from "@mui/material/styles";
-import { red } from "@mui/material/colors";
+import { blue, red } from "@mui/material/colors";
 
-export const roboto = Roboto({
+export const roboto = Noto_Sans({
   weight: ["300", "400", "500", "700"],
   subsets: ["latin"],
   display: "swap",
@@ -13,7 +13,7 @@ export const roboto = Roboto({
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#556cd6",
+      main: blue[500],
     },
     secondary: {
       main: "#19857b",
@@ -25,6 +25,15 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: roboto.style.fontFamily,
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: "capitalize",
+        },
+      },
+    },
   },
 });
 
