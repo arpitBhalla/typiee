@@ -4,6 +4,7 @@ export const questions: QuestionType[] = [
   {
     title: "Up-skilling requires time commitment",
     type: "info",
+    name: "info",
     summary: `The GrowthX experience is designed by keeping in mind the working hours founders & full time operators typically work in.\n\nYou will spend\n- 6 hours/week for the first 5 weeks\n- 15 hours/week for the last 3 weeks`,
     action: {
       title: "I agree",
@@ -36,6 +37,7 @@ export const questions: QuestionType[] = [
     required: true,
     summary: "We will personalize your learning experience accordingly",
     type: "dropdown",
+    name: "industry",
     action: {
       title: "Ok",
       icon: "done",
@@ -71,6 +73,7 @@ export const questions: QuestionType[] = [
       "{{firstName}}, what's your professional goal for the next 12 months?",
     required: true,
     type: "multi",
+    name: "goal",
     action: {
       title: "Ok",
       icon: "done",
@@ -87,6 +90,8 @@ export const questions: QuestionType[] = [
   {
     type: "input",
     title: "Email you'd like to register with?",
+    name: "email",
+    // validation: "email",
     summary:
       "We will keep all our communications with you through this email. Do check your spam inbox if you can't find our application received email.",
     action: {
@@ -95,8 +100,9 @@ export const questions: QuestionType[] = [
     },
   },
   {
-    // TODO
     type: "input",
+    name: "phone",
+    // variant: "phone",
     title: "Your phone number",
     summary:
       "We won't call you unless it is absolutely required to process your application.",

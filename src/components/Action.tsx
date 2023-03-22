@@ -7,10 +7,13 @@ export const Action = ({
   title,
   next,
   submit,
-}: CommonQuestionType["action"]) => {
+  onClick,
+}: CommonQuestionType["action"] & {
+  onClick: any;
+}) => {
   return (
     <>
-      <MuiButton variant="contained" disableRipple>
+      <MuiButton onClick={onClick} variant="contained" disableRipple>
         {title}
         {icon === "done" ? <CheckOutlined fontSize="small" /> : null}
       </MuiButton>

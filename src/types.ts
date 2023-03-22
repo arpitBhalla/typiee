@@ -3,7 +3,7 @@ import { SingleSelectProps } from "./components/fields/SingleSelectField";
 
 export interface CommonQuestionType {
   title: string;
-  name?: string;
+  name: string;
   summary?: string;
   required?: boolean;
   action: {
