@@ -4,11 +4,11 @@ import { QuestionType } from "../../types";
 import { InputField } from "./InputField";
 import React from "react";
 
-const fields: Record<QuestionType["type"], any> = {
+const fields: Record<Partial<QuestionType["type"]>, any> = {
   input: InputField,
   multi: MultiSelectField,
   single: SingleSelectField,
-  dropdown: "demo",
+  dropdown: null,
   info: null,
 };
 
@@ -19,7 +19,7 @@ export const FormField = ({
   type: QuestionType["type"];
   props: any;
 }) => {
-  const field = fields[type] || null;
-
+  const field = fields[type];
+  if (!field) return null;
   return React.createElement(field, props);
 };
