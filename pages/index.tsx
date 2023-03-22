@@ -1,10 +1,10 @@
 import styled from "@emotion/styled";
-import { CheckBox, CheckOutlined } from "@mui/icons-material";
+import { CheckOutlined } from "@mui/icons-material";
 import { grey } from "@mui/material/colors";
 import Container from "@mui/material/Container";
 import React from "react";
 
-const checkedColor = grey[200];
+const checkedColor = grey[50];
 const unCheckedColor = grey[600];
 
 const Label = styled("label")(({ theme }) => ({
@@ -37,7 +37,11 @@ const Label = styled("label")(({ theme }) => ({
   svg: {
     display: "none",
   },
+  "&:hover": {
+    backgroundColor: unCheckedColor + "80",
+  },
   "&:has(input:checked)": {
+    animation: "blink .5s",
     borderColor: checkedColor,
     "span.index": {
       borderColor: checkedColor,
@@ -112,8 +116,8 @@ export default function Home() {
         <Radio name="demo" label="Demo" />
       </FormField>
       <FormField>
-        <Radio name="demo" label="Demo" />
-        <Radio name="demo" label="Demo" />
+        <Checkbox name="demo" label="Demo" />
+        <Checkbox name="demo" label="Demo" />
       </FormField>
     </Container>
   );
