@@ -1,17 +1,17 @@
 import styled from "@emotion/styled";
 import {
-  Box,
+  Container as MuiContainer,
   LinearProgress,
   Slide,
   Toolbar,
-  Button,
-  Container as MuiContainer,
 } from "@mui/material";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FormContext } from "../contexts/FormContext";
 import { useCreateForm } from "../hooks/form";
 import { FieldRef, QuestionType } from "../types";
-import { Section } from "./Section";
+import { Action } from "./Action";
+import { ErrorCard, Section } from "./Section";
+import { If } from "./ui/If";
 
 interface FormProps {
   questions: QuestionType[];
@@ -20,54 +20,71 @@ interface FormProps {
 export const Form = ({ questions }: FormProps) => {
   const { setFormValue, getFormValue, getFormValues } =
     useCreateForm(questions);
-  const [questionIndex, setQuestionIndex] = useState(0);
-  const totalLength = useMemo(() => questions.length, []);
+
   const [active, setActive] = useState(true);
-  const [transitionDir, setTransitionDir] = useState<"up" | "down">("up");
+  const [error, setError] = useState("");
 
   const sectionRef = useRef<FieldRef>();
 
+  console.log(getFormValues());
+
   const onSubmit = () => {
-    // if (!sectionRef.current!.validate()) return;
-    // const { name, value, required } = sectionRef.current!.getValue();
-    // setFormValue(name, value);
-    // if (required && !value) return;
-    setQuestionIndex((index) => index + 1);
+    if (sectionRef.current) {
+      const { name, value } = sectionRef.current!.getValue();
+      setFormValue(name, value);
+    }
+    move();
   };
 
   const listener = (ev: KeyboardEvent) => {
+    // if(error){
+
+    // }
     if (ev.code == "Enter") {
       onSubmit();
     }
   };
 
-  const scrolledRef = useRef(true);
+  const transitionRef = useRef({
+    currentIndex: 0,
+    totalIndex: questions.length,
+    direction: "up" as "up" | "down",
+    canScroll: true,
+  });
 
   const scroll = (ev: WheelEvent) => {
     const absDeltaY = Math.abs(ev.deltaY);
-    if (scrolledRef.current && absDeltaY > 4) {
+    if (transitionRef.current.canScroll && absDeltaY > 4) {
       const diff = Math.sign(ev.deltaY);
-      if (diff > 0) setTransitionDir("down");
-      else setTransitionDir("up");
-
-      setActive(false);
-      setTimeout(() => {
-        setQuestionIndex((index) => {
-          const newIndex = index + diff;
-          if (newIndex < 0 || newIndex >= totalLength) return index;
-          return index + diff;
-        });
-        if (diff < 0) setTransitionDir("down");
-        else setTransitionDir("up");
-        setActive(true);
-      }, 300);
-
-      scrolledRef.current = false;
+      move(diff);
+      transitionRef.current.canScroll = false;
     }
     if (absDeltaY < 4) {
-      scrolledRef.current = true;
+      transitionRef.current.canScroll = true;
     }
   };
+
+  function move(diff = 1) {
+    const validationError = sectionRef.current?.validate();
+    if (diff > 0 && sectionRef.current && validationError) {
+      console.log("invalid", validationError);
+      setError(validationError);
+      return;
+    } else {
+      setError("");
+    }
+    const newIndex = transitionRef.current.currentIndex + diff;
+    if (newIndex < 0 || newIndex >= transitionRef.current.totalIndex) return;
+
+    transitionRef.current.direction = diff > 0 ? "down" : "up";
+
+    setActive(false);
+    setTimeout(() => {
+      transitionRef.current.currentIndex += diff;
+      transitionRef.current.direction = diff < 0 ? "down" : "up";
+      setActive(true);
+    }, 300);
+  }
 
   useEffect(() => {
     window.addEventListener("keydown", listener);
@@ -79,36 +96,41 @@ export const Form = ({ questions }: FormProps) => {
     };
   }, []);
 
+  const currentQuestion = questions[transitionRef.current.currentIndex];
+
   return (
     <FormContext.Provider value={{ getFormValue, getFormValues, setFormValue }}>
       <LinearProgress
         sx={{ backgroundColor: "transparent" }}
         variant="determinate"
-        value={(questionIndex * 100) / totalLength}
+        value={
+          (transitionRef.current.currentIndex * 100) /
+          transitionRef.current.totalIndex
+        }
       />
       <Toolbar sx={{ position: "fixed" }}></Toolbar>
-      {questionIndex < questions.length ? (
+      <If cond={transitionRef.current.currentIndex < questions.length}>
         <Slide
           in={active}
           mountOnEnter
           unmountOnExit
-          direction={transitionDir}
-          // direction={active ? "down" : "up"}
+          direction={transitionRef.current.direction}
         >
           <Container>
-            <Section
-              ref={sectionRef}
-              question={questions[questionIndex]}
-              onSubmit={onSubmit}
-            />
+            <Section ref={sectionRef} question={currentQuestion} />
+            <If cond={!error}>
+              <Action
+                onClick={onSubmit}
+                next={currentQuestion["type"] === "input"}
+                {...currentQuestion["action"]}
+              />
+            </If>
+            <If cond={!!error}>
+              <ErrorCard value={{ error }} />
+            </If>
           </Container>
         </Slide>
-      ) : (
-        <>
-          {JSON.stringify(getFormValues())}
-          <button onClick={() => setQuestionIndex(0)}>reset</button>
-        </>
-      )}
+      </If>
     </FormContext.Provider>
   );
 };
@@ -118,6 +140,6 @@ const Container = styled(MuiContainer)({
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
-  gap: 2,
+  gap: 16,
   height: "100vh",
 });

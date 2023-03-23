@@ -1,6 +1,7 @@
-import { CheckOutlined, KeyboardReturn } from "@mui/icons-material";
+import { CheckOutlined } from "@mui/icons-material";
 import { Button as MuiButton, Typography } from "@mui/material";
 import { CommonQuestionType } from "../types";
+import { If } from "./ui/If";
 
 export const Action = ({
   icon,
@@ -21,12 +22,10 @@ export const Action = ({
       </MuiButton>
       {next || submit ? (
         <Typography variant="caption" color="textPrimary" sx={{ ml: 2 }}>
-          {next ? (
-            <>
-              Press <b>Enter</b> ↵
-            </>
-          ) : null}
-          {submit ? "press Cmd ⌘ + Enter ↵" : ""}
+          <If cond={next && !submit}>
+            Press <b>Enter</b> ↵
+          </If>
+          <If cond={submit}>press Cmd ⌘ + Enter ↵</If>
         </Typography>
       ) : null}
     </div>

@@ -10,32 +10,33 @@ interface InputFieldProps extends CommonQuestionType {
 
 export const InputField = forwardRef(
   ({ required, name, type, onChange, ...rest }: InputFieldProps, ref) => {
-    const [value, setValue] = useState({ text: "", error: "" });
+    const [value, setValue] = useState("");
     const { getFormValue } = useForm();
 
     useImperativeHandle<any, FieldRef>(ref, () => ({
-      getValue: () => ({ name, value: value.text }),
+      getValue: () => ({ name, value }),
       validate: validateField,
     }));
 
     useEffect(() => {
-      setValue({ text: getFormValue(name), error: "" });
+      setValue(getFormValue(name));
     }, [name]);
 
     const validateField = () => {
-      if (required && !value.text) {
-        setValue({ text: value.text, error: "Please fill this in" });
-        return false;
+      if (required && !value) {
+        console.log("error from field");
+        return "Required";
       }
-      return true;
+      return undefined;
     };
 
     return (
       <Input
         fullWidth
         autoFocus
-        // onChange={(event) => onChange(event.target.value)}
         {...rest}
+        onChange={(event) => setValue(event.target.value)}
+        value={value}
       />
     );
   }

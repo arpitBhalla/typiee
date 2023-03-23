@@ -35,5 +35,5 @@ export interface FieldRef {
     value: string;
     required?: boolean;
   };
-  validate: () => boolean;
+  validate: () => string | undefined;
 }
