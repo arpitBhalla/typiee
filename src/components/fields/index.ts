@@ -15,14 +15,12 @@ const fields: Record<Partial<QuestionType["type"]>, any> = {
 interface FormFieldProps {
   type: QuestionType["type"];
   props: any;
-  value: string;
-  onChange: (value: string) => void;
 }
 
 export const FormField = React.forwardRef(
-  ({ type, props, value, onChange }: FormFieldProps, ref) => {
+  ({ type, props }: FormFieldProps, ref) => {
     const field = fields[type];
     if (!field) return null;
-    return React.createElement(field, { value, onChange, ...props, ref });
+    return React.createElement(field, { ...props, ref });
   }
 );

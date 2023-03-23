@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { Warning } from "@mui/icons-material";
 import { Box, Typography } from "@mui/material";
 import { red } from "@mui/material/colors";
@@ -44,22 +42,26 @@ export const Section = forwardRef(
   }
 );
 
-export const ErrorCard = ({ value }) => {
+export const ErrorCard = ({ value }: any) => {
   return (
     <Box>
       {value.error ? (
         <Box
           bgcolor={red[50]}
-          px={1}
-          pr={2}
-          py={0.5}
+          padding="4px 12px 4px 8px"
           display="inline-flex"
           alignItems={"center"}
           gap={1}
           mt={1}
+          borderRadius={"2px"}
         >
-          <Warning htmlColor={red[500]} fontSize="small" />
-          <Typography fontWeight={"bold"} variant="caption" color="error">
+          <Warning htmlColor={red[800]} fontSize="small" />
+          <Typography
+            fontWeight={"bold"}
+            variant="caption"
+            color={red[800]}
+            fontSize="14"
+          >
             {value.error}
           </Typography>
         </Box>

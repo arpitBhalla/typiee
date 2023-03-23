@@ -1,42 +1,38 @@
 import { Input } from "@mui/material";
-import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { CommonQuestionType, FieldRef } from "../../types";
+import { forwardRef, useImperativeHandle } from "react";
 import { useForm } from "../../hooks/form";
+import { CommonQuestionType, FieldRef } from "../../types";
 
 interface InputFieldProps extends CommonQuestionType {
-  onChange: (value: string) => void;
   type: "email";
 }
 
 export const InputField = forwardRef(
-  ({ required, name, type, onChange, ...rest }: InputFieldProps, ref) => {
-    const [value, setValue] = useState("");
-    const { getFormValue } = useForm();
+  ({ required, name, type, ...rest }: InputFieldProps, ref) => {
+    const { getFormValue, setFormValue } = useForm();
 
     useImperativeHandle<any, FieldRef>(ref, () => ({
-      getValue: () => ({ name, value }),
-      validate: validateField,
+      validate: () => {
+        if (required && !getFormValue(name)) {
+          return "Please fill this in";
+        }
+        return undefined;
+      },
     }));
-
-    useEffect(() => {
-      setValue(getFormValue(name));
-    }, [name]);
-
-    const validateField = () => {
-      if (required && !value) {
-        console.log("error from field");
-        return "Required";
-      }
-      return undefined;
-    };
 
     return (
       <Input
         fullWidth
+        defaultValue={getFormValue(name)}
         autoFocus
+        sx={{
+          fontSize: "30px",
+        }}
+        placeholder="Type your answer here..."
         {...rest}
-        onChange={(event) => setValue(event.target.value)}
-        value={value}
+        onChange={(event) => {
+          setFormValue(name, event.target.value);
+        }}
       />
     );
   }

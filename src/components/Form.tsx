@@ -5,6 +5,7 @@ import {
   Slide,
   Toolbar,
 } from "@mui/material";
+import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FormContext } from "../contexts/FormContext";
 import { useCreateForm } from "../hooks/form";
@@ -28,20 +29,9 @@ export const Form = ({ questions }: FormProps) => {
 
   console.log(getFormValues());
 
-  const onSubmit = () => {
-    if (sectionRef.current) {
-      const { name, value } = sectionRef.current!.getValue();
-      setFormValue(name, value);
-    }
-    move();
-  };
-
   const listener = (ev: KeyboardEvent) => {
-    // if(error){
-
-    // }
     if (ev.code == "Enter") {
-      onSubmit();
+      move();
     }
   };
 
@@ -108,7 +98,9 @@ export const Form = ({ questions }: FormProps) => {
           transitionRef.current.totalIndex
         }
       />
-      <Toolbar sx={{ position: "fixed" }}></Toolbar>
+      <Toolbar sx={{ position: "fixed" }}>
+        <Image src="/logo.png" width={100} height={24} alt="logo" />
+      </Toolbar>
       <If cond={transitionRef.current.currentIndex < questions.length}>
         <Slide
           in={active}
@@ -118,11 +110,11 @@ export const Form = ({ questions }: FormProps) => {
         >
           <Container>
             <Section ref={sectionRef} question={currentQuestion} />
-            <If cond={!error}>
+            <If cond={!error && !!currentQuestion}>
               <Action
-                onClick={onSubmit}
-                next={currentQuestion["type"] === "input"}
-                {...currentQuestion["action"]}
+                onClick={move}
+                next={currentQuestion?.["type"] === "input"}
+                {...currentQuestion?.["action"]}
               />
             </If>
             <If cond={!!error}>

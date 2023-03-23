@@ -30,10 +30,10 @@ export type QuestionType =
   | Rest;
 
 export interface FieldRef {
-  getValue: () => {
-    name: string;
-    value: string;
-    required?: boolean;
-  };
+  // getValue: () => {
+  //   name: string;
+  //   value: string;
+  //   required?: boolean;
+  // };
   validate: () => string | undefined;
 }

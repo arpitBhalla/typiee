@@ -7,7 +7,10 @@ export const useCreateForm = (questions: QuestionType[]) => {
 
   useEffect(() => {
     formRef.current = questions.reduce(
-      (prev, { name }) => ({ ...prev, [name]: "" }),
+      (prev, { name, type }) => ({
+        ...prev,
+        [name]: type === "multi" ? new Set() : "",
+      }),
       {}
     );
   }, questions);
