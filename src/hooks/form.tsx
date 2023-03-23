@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef } from "react";
 import { QuestionType } from "../types";
 import { FormContext } from "../contexts/FormContext";
 
-export const useCreateFormState = (questions: QuestionType[]) => {
+export const useCreateForm = (questions: QuestionType[]) => {
   const formRef = useRef<Record<string, string>>();
 
   useEffect(() => {

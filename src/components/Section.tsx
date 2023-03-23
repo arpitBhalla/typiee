@@ -1,5 +1,7 @@
+// @ts-nocheck
+
 import { Warning } from "@mui/icons-material";
-import { Box, Container, Typography, Grid } from "@mui/material";
+import { Box, Container, Typography, Grid, Slide } from "@mui/material";
 import { red } from "@mui/material/colors";
 import { forwardRef } from "react";
 import { QuestionType } from "../types";
@@ -23,24 +25,26 @@ export const Section = forwardRef(
     const { getFormValue } = useForm();
 
     return (
-      <Container
-        maxWidth="sm"
-        sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-      >
-        <Typography variant="h5" color="textPrimary">
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Typography fontSize={"24px"} color="textPrimary">
           {title?.replace(
             /\{\{(.*)\}\}/g,
             (_, fieldName) => getFormValue(fieldName) || ""
           )}{" "}
           {required && "*"}
         </Typography>
-        <Typography variant="h6" color="textSecondary">
+        <Typography
+          lineHeight="28px"
+          whiteSpace="pre-wrap"
+          fontSize="20px"
+          color="textSecondary"
+        >
           {summary}
         </Typography>
         <FormField type={type} ref={ref} props={{ name, required, ...rest }} />
         <Action onClick={onSubmit} next={type === "input"} {...action} />
         {/* <Error value={{}} /> */}
-      </Container>
+      </Box>
     );
   }
 );

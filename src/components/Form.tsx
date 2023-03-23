@@ -1,8 +1,15 @@
-import { Box, LinearProgress, Toolbar } from "@mui/material";
-import { Container } from "@mui/system";
+import styled from "@emotion/styled";
+import {
+  Box,
+  LinearProgress,
+  Slide,
+  Toolbar,
+  Button,
+  Container as MuiContainer,
+} from "@mui/material";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FormContext } from "../contexts/FormContext";
-import { useCreateFormState } from "../hooks/form";
+import { useCreateForm } from "../hooks/form";
 import { FieldRef, QuestionType } from "../types";
 import { Section } from "./Section";
 
@@ -12,9 +19,11 @@ interface FormProps {
 
 export const Form = ({ questions }: FormProps) => {
   const { setFormValue, getFormValue, getFormValues } =
-    useCreateFormState(questions);
+    useCreateForm(questions);
   const [questionIndex, setQuestionIndex] = useState(0);
   const totalLength = useMemo(() => questions.length, []);
+  const [active, setActive] = useState(true);
+  const [transitionDir, setTransitionDir] = useState<"up" | "down">("up");
 
   const sectionRef = useRef<FieldRef>();
 
@@ -32,13 +41,36 @@ export const Form = ({ questions }: FormProps) => {
     }
   };
 
-  const scroll = throttleFunction((e: WheelEvent) => {
-    console.log("hehe", e);
-  }, 1000);
+  const scrolledRef = useRef(true);
+
+  const scroll = (ev: WheelEvent) => {
+    const absDeltaY = Math.abs(ev.deltaY);
+    if (scrolledRef.current && absDeltaY > 4) {
+      const diff = Math.sign(ev.deltaY);
+      if (diff > 0) setTransitionDir("down");
+      else setTransitionDir("up");
+
+      setActive(false);
+      setTimeout(() => {
+        setQuestionIndex((index) => {
+          const newIndex = index + diff;
+          if (newIndex < 0 || newIndex >= totalLength) return index;
+          return index + diff;
+        });
+        if (diff < 0) setTransitionDir("down");
+        else setTransitionDir("up");
+        setActive(true);
+      }, 300);
+
+      scrolledRef.current = false;
+    }
+    if (absDeltaY < 4) {
+      scrolledRef.current = true;
+    }
+  };
 
   useEffect(() => {
     window.addEventListener("keydown", listener);
-
     window.addEventListener("wheel", scroll);
 
     return () => {
@@ -54,13 +86,23 @@ export const Form = ({ questions }: FormProps) => {
         variant="determinate"
         value={(questionIndex * 100) / totalLength}
       />
-      <Toolbar>hehe</Toolbar>
+      <Toolbar sx={{ position: "fixed" }}></Toolbar>
       {questionIndex < questions.length ? (
-        <Section
-          ref={sectionRef}
-          question={questions[questionIndex]}
-          onSubmit={onSubmit}
-        />
+        <Slide
+          in={active}
+          mountOnEnter
+          unmountOnExit
+          direction={transitionDir}
+          // direction={active ? "down" : "up"}
+        >
+          <Container>
+            <Section
+              ref={sectionRef}
+              question={questions[questionIndex]}
+              onSubmit={onSubmit}
+            />
+          </Container>
+        </Slide>
       ) : (
         <>
           {JSON.stringify(getFormValues())}
@@ -71,15 +113,11 @@ export const Form = ({ questions }: FormProps) => {
   );
 };
 
-const throttleFunction = (func: Function, delay: number) => {
-  let prev = 0;
-  return (...args: any) => {
-    let now = new Date().getTime();
-
-    if (now - prev > delay) {
-      prev = now;
-
-      return func(...args);
-    }
-  };
-};
+const Container = styled(MuiContainer)({
+  width: "720px",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  gap: 2,
+  height: "100vh",
+});
