@@ -6,11 +6,11 @@ import { questions } from "../src/questions";
 
 export default function Home() {
   return (
-    <Container maxWidth="md">
-      {/* {questions.map((question, index) => (
-        <Section {...question} key={index} />
-      ))} */}
-      <Form questions={questions} />
-    </Container>
+    <Form questions={questions} />
+    // // <Container maxWidth="md">
+    //   {/* {questions.map((question, index) => (
+    //     <Section {...question} key={index} />
+    //   ))} */}
+    // // </Container>
   );
 }

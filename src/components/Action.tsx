@@ -12,7 +12,7 @@ export const Action = ({
   onClick: any;
 }) => {
   return (
-    <>
+    <div>
       <MuiButton onClick={onClick} variant="contained" disableRipple>
         {title}
         {icon === "done" ? <CheckOutlined fontSize="small" /> : null}
@@ -23,6 +23,6 @@ export const Action = ({
           {submit ? "press Cmd ⌘ + Enter ↵" : ""}
         </Typography>
       ) : null}
-    </>
+    </div>
   );
 };

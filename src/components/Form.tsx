@@ -1,31 +1,10 @@
-import React, { useEffect, useRef } from "react";
-import { QuestionType } from "../types";
-import { Section, SectionRef } from "./Section";
-
-const useCreateFormState = (questions: QuestionType[]) => {
-  const formRef = useRef<Record<string, string>>();
-
-  useEffect(() => {
-    formRef.current = questions.reduce(
-      (prev, { name }) => ({ ...prev, [name]: "" }),
-      {}
-    );
-  }, questions);
-
-  const getFormValues = () => formRef.current;
-
-  const getFormValue = (name: string) => formRef.current?.[name] || "";
-
-  const setFormValue = (name: string, value: string) => {
-    formRef.current![name] = value;
-  };
-
-  return { getFormValue, setFormValue, getFormValues };
-};
-
-type FormContextT = ReturnType<typeof useCreateFormState>;
-
-const FormContext = React.createContext<FormContextT>({} as FormContextT);
+import { Box, LinearProgress, Toolbar } from "@mui/material";
+import { Container } from "@mui/system";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { FormContext } from "../contexts/FormContext";
+import { useCreateFormState } from "../hooks/form";
+import { FieldRef, QuestionType } from "../types";
+import { Section } from "./Section";
 
 interface FormProps {
   questions: QuestionType[];
@@ -34,15 +13,16 @@ interface FormProps {
 export const Form = ({ questions }: FormProps) => {
   const { setFormValue, getFormValue, getFormValues } =
     useCreateFormState(questions);
-  const [questionIndex, setQuestionIndex] = React.useState(0);
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const totalLength = useMemo(() => questions.length, []);
 
-  const sectionRef = useRef<SectionRef>();
+  const sectionRef = useRef<FieldRef>();
 
   const onSubmit = () => {
-    if (!sectionRef.current!.validate()) return;
-    const { name, value, required } = sectionRef.current!.getValue();
-    setFormValue(name, value);
-    if (required && !value) return;
+    // if (!sectionRef.current!.validate()) return;
+    // const { name, value, required } = sectionRef.current!.getValue();
+    // setFormValue(name, value);
+    // if (required && !value) return;
     setQuestionIndex((index) => index + 1);
   };
 
@@ -52,14 +32,29 @@ export const Form = ({ questions }: FormProps) => {
     }
   };
 
+  const scroll = throttleFunction((e: WheelEvent) => {
+    console.log("hehe", e);
+  }, 1000);
+
   useEffect(() => {
     window.addEventListener("keydown", listener);
 
-    return () => window.removeEventListener("keydown", listener);
+    window.addEventListener("wheel", scroll);
+
+    return () => {
+      window.removeEventListener("keydown", listener);
+      window.removeEventListener("wheel", scroll);
+    };
   }, []);
 
   return (
     <FormContext.Provider value={{ getFormValue, getFormValues, setFormValue }}>
+      <LinearProgress
+        sx={{ backgroundColor: "transparent" }}
+        variant="determinate"
+        value={(questionIndex * 100) / totalLength}
+      />
+      <Toolbar>hehe</Toolbar>
       {questionIndex < questions.length ? (
         <Section
           ref={sectionRef}
@@ -76,4 +71,15 @@ export const Form = ({ questions }: FormProps) => {
   );
 };
 
-export const useForm = () => React.useContext(FormContext);
+const throttleFunction = (func: Function, delay: number) => {
+  let prev = 0;
+  return (...args: any) => {
+    let now = new Date().getTime();
+
+    if (now - prev > delay) {
+      prev = now;
+
+      return func(...args);
+    }
+  };
+};

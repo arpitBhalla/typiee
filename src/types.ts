@@ -28,3 +28,12 @@ export type QuestionType =
   | SingleSelectProps
   | MultiSelectProps
   | Rest;
+
+export interface FieldRef {
+  getValue: () => {
+    name: string;
+    value: string;
+    required?: boolean;
+  };
+  validate: () => boolean;
+}

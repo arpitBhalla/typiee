@@ -1,19 +1,18 @@
-import { Noto_Sans } from "next/font/google";
+import { red } from "@mui/material/colors";
 import { createTheme } from "@mui/material/styles";
-import { blue, red } from "@mui/material/colors";
+import { Questrial } from "next/font/google";
 
-export const roboto = Noto_Sans({
-  weight: ["300", "400", "500", "700"],
+export const questrial = Questrial({
+  weight: ["400"],
   subsets: ["latin"],
   display: "swap",
   fallback: ["Helvetica", "Arial", "sans-serif"],
 });
 
-// Create a theme instance.
 const theme = createTheme({
   palette: {
     primary: {
-      main: blue[500],
+      main: "rgb(0, 119, 255)",
     },
     secondary: {
       main: "#19857b",
@@ -24,7 +23,7 @@ const theme = createTheme({
     mode: "dark",
   },
   typography: {
-    fontFamily: roboto.style.fontFamily,
+    fontFamily: questrial.style.fontFamily,
   },
   components: {
     MuiButton: {
