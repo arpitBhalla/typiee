@@ -16,6 +16,7 @@
     "@emotion/styled": "latest",
     "@mui/icons-material": "latest",
     "@mui/material": "latest",
+    "lethargy": "^1.0.9",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest"

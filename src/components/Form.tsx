@@ -1,18 +1,19 @@
+import { FormContext } from "@/contexts/FormContext";
+import { useCreateForm } from "@/hooks/form";
+import { FieldRef, QuestionType } from "@/types";
 import styled from "@emotion/styled";
 import {
   Container as MuiContainer,
   LinearProgress,
-  Slide,
   Toolbar,
 } from "@mui/material";
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { FormContext } from "../contexts/FormContext";
-import { useCreateForm } from "../hooks/form";
-import { FieldRef, QuestionType } from "../types";
+import { useEffect, useRef, useState } from "react";
 import { Action } from "./Action";
 import { ErrorCard, Section } from "./Section";
 import { If } from "./ui/If";
+
+import { Swipe } from "./Swipe";
 
 interface FormProps {
   questions: QuestionType[];
@@ -26,8 +27,7 @@ export const Form = ({ questions }: FormProps) => {
   const [error, setError] = useState("");
 
   const sectionRef = useRef<FieldRef>();
-
-  console.log(getFormValues());
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const listener = (ev: KeyboardEvent) => {
     if (ev.code == "Enter") {
@@ -42,27 +42,15 @@ export const Form = ({ questions }: FormProps) => {
     canScroll: true,
   });
 
-  const scroll = (ev: WheelEvent) => {
-    const absDeltaY = Math.abs(ev.deltaY);
-    if (transitionRef.current.canScroll && absDeltaY > 4) {
-      const diff = Math.sign(ev.deltaY);
-      move(diff);
-      transitionRef.current.canScroll = false;
-    }
-    if (absDeltaY < 4) {
-      transitionRef.current.canScroll = true;
-    }
-  };
-
   function move(diff = 1) {
-    const validationError = sectionRef.current?.validate();
-    if (diff > 0 && sectionRef.current && validationError) {
-      console.log("invalid", validationError);
-      setError(validationError);
-      return;
-    } else {
-      setError("");
-    }
+    // const validationError = sectionRef.current?.validate();
+    // if (diff > 0 && sectionRef.current && validationError) {
+    //   console.log("invalid", validationError);
+    //   setError(validationError);
+    //   return;
+    // } else {
+    //   setError("");
+    // }
     const newIndex = transitionRef.current.currentIndex + diff;
     if (newIndex < 0 || newIndex >= transitionRef.current.totalIndex) return;
 
@@ -73,16 +61,14 @@ export const Form = ({ questions }: FormProps) => {
       transitionRef.current.currentIndex += diff;
       transitionRef.current.direction = diff < 0 ? "down" : "up";
       setActive(true);
-    }, 300);
+    }, 30);
   }
 
   useEffect(() => {
     window.addEventListener("keydown", listener);
-    window.addEventListener("wheel", scroll);
 
     return () => {
       window.removeEventListener("keydown", listener);
-      window.removeEventListener("wheel", scroll);
     };
   }, []);
 
@@ -98,17 +84,29 @@ export const Form = ({ questions }: FormProps) => {
           transitionRef.current.totalIndex
         }
       />
-      <Toolbar sx={{ position: "fixed" }}>
+      <Toolbar sx={{ position: "fixed" }} className="renderer-in">
         <Image src="/logo.png" width={100} height={24} alt="logo" />
       </Toolbar>
       <If cond={transitionRef.current.currentIndex < questions.length}>
-        <Slide
-          in={active}
-          mountOnEnter
-          unmountOnExit
-          direction={transitionRef.current.direction}
+        <Swipe
+          onSwipe={(dir) => {
+            if (dir === "up") {
+              containerRef.current!.style.animation = "slideIn 0.3s reverse";
+            } else {
+              containerRef.current!.style.animation = "slideOut 0.3s normal";
+            }
+
+            setTimeout(() => {
+              move(dir === "up" ? -1 : 1);
+              if (dir === "up") {
+                containerRef.current!.style.animation = "slideOut 0.3s reverse";
+              } else {
+                containerRef.current!.style.animation = "slideIn 0.3s normal";
+              }
+            }, 300);
+          }}
         >
-          <Container>
+          <Container ref={containerRef}>
             <Section ref={sectionRef} question={currentQuestion} />
             <If cond={!error && !!currentQuestion}>
               <Action
@@ -121,7 +119,7 @@ export const Form = ({ questions }: FormProps) => {
               <ErrorCard value={{ error }} />
             </If>
           </Container>
-        </Slide>
+        </Swipe>
       </If>
     </FormContext.Provider>
   );
@@ -134,4 +132,7 @@ const Container = styled(MuiContainer)({
   justifyContent: "center",
   gap: 16,
   height: "100vh",
+  animationDuration: "0.3s",
+  animationFillMode: "forwards",
+  animationTimingFunction: "ease-out",
 });
