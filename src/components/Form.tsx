@@ -23,48 +23,18 @@ export const Form = ({ questions }: FormProps) => {
   const { setFormValue, getFormValue, getFormValues } =
     useCreateForm(questions);
 
-  const [active, setActive] = useState(true);
   const [error, setError] = useState("");
+  const [index, setIndex] = useState(0);
 
-  const sectionRef = useRef<FieldRef>();
+  const questionFieldRef = useRef<FieldRef>();
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const listener = (ev: KeyboardEvent) => {
-    if (ev.code == "Enter") {
-      move();
-    }
-  };
-
-  const transitionRef = useRef({
-    currentIndex: 0,
-    totalIndex: questions.length,
-    direction: "up" as "up" | "down",
-    canScroll: true,
-  });
-
-  function move(diff = 1) {
-    // const validationError = sectionRef.current?.validate();
-    // if (diff > 0 && sectionRef.current && validationError) {
-    //   console.log("invalid", validationError);
-    //   setError(validationError);
-    //   return;
-    // } else {
-    //   setError("");
-    // }
-    const newIndex = transitionRef.current.currentIndex + diff;
-    if (newIndex < 0 || newIndex >= transitionRef.current.totalIndex) return;
-
-    transitionRef.current.direction = diff > 0 ? "down" : "up";
-
-    setActive(false);
-    setTimeout(() => {
-      transitionRef.current.currentIndex += diff;
-      transitionRef.current.direction = diff < 0 ? "down" : "up";
-      setActive(true);
-    }, 30);
-  }
-
   useEffect(() => {
+    const listener = (ev: KeyboardEvent) => {
+      if (ev.code == "Enter") {
+        onSwipeHandler("down");
+      }
+    };
     window.addEventListener("keydown", listener);
 
     return () => {
@@ -72,47 +42,56 @@ export const Form = ({ questions }: FormProps) => {
     };
   }, []);
 
-  const currentQuestion = questions[transitionRef.current.currentIndex];
+  const currentQuestion = questions[index];
+  const totalIndex = questions.length;
+
+  const onSwipeHandler = (dir: "up" | "down"): void => {
+    const isUp = dir === "up";
+    if (!index && isUp) return;
+
+    const validationError = questionFieldRef.current?.validate();
+    if (!isUp && questionFieldRef.current && validationError) {
+      console.log("invalid", validationError);
+      setError(validationError);
+      return;
+    } else {
+      setError("");
+    }
+    containerRef.current!.style.animationDirection = isUp
+      ? "reverse"
+      : "normal";
+    containerRef.current!.style.animationName = isUp ? "slideIn" : "slideOut";
+
+    setTimeout(() => {
+      containerRef.current!.style.animationName = isUp ? "slideOut" : "slideIn";
+
+      setIndex((prevIndex) => {
+        const newIndex = prevIndex + (isUp ? -1 : 1);
+        if (newIndex < 0 || prevIndex >= totalIndex) return prevIndex;
+        return newIndex;
+      });
+    }, 250);
+  };
 
   return (
     <FormContext.Provider value={{ getFormValue, getFormValues, setFormValue }}>
       <LinearProgress
         sx={{ backgroundColor: "transparent" }}
         variant="determinate"
-        value={
-          (transitionRef.current.currentIndex * 100) /
-          transitionRef.current.totalIndex
-        }
+        value={(index * 100) / totalIndex}
       />
       <Toolbar sx={{ position: "fixed" }} className="renderer-in">
         <Image src="/logo.png" width={100} height={24} alt="logo" />
       </Toolbar>
-      <If cond={transitionRef.current.currentIndex < questions.length}>
-        <Swipe
-          onSwipe={(dir) => {
-            if (dir === "up") {
-              containerRef.current!.style.animation = "slideIn 0.3s reverse";
-            } else {
-              containerRef.current!.style.animation = "slideOut 0.3s normal";
-            }
-
-            setTimeout(() => {
-              move(dir === "up" ? -1 : 1);
-              if (dir === "up") {
-                containerRef.current!.style.animation = "slideOut 0.3s reverse";
-              } else {
-                containerRef.current!.style.animation = "slideIn 0.3s normal";
-              }
-            }, 300);
-          }}
-        >
+      <If cond={index < questions.length}>
+        <Swipe onSwipe={onSwipeHandler}>
           <Container ref={containerRef}>
-            <Section ref={sectionRef} question={currentQuestion} />
+            <Section ref={questionFieldRef} question={currentQuestion} />
             <If cond={!error && !!currentQuestion}>
               <Action
-                onClick={move}
-                next={currentQuestion?.["type"] === "input"}
-                {...currentQuestion?.["action"]}
+                onClick={() => onSwipeHandler("down")}
+                next={currentQuestion?.type === "input"}
+                {...currentQuestion?.action}
               />
             </If>
             <If cond={!!error}>

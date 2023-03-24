@@ -1,16 +1,23 @@
 import Container from "@mui/material/Container";
-// import KeyboardCommandKeyOutlinedIcon from "@mui/icons-material/KeyboardCommandKeyOutlined";
-// import KeyboardReturnOutlinedIcon from "@mui/icons-material/KeyboardReturnOutlined";
-import { Form } from "../src/components/Form";
-import { questions } from "../src/questions";
+import Link from "next/link";
+import Button from "@mui/material/Button";
+import { Toolbar, Typography } from "@mui/material";
 
 export default function Home() {
   return (
-    <Form questions={questions} />
-    // // <Container maxWidth="md">
-    //   {/* {questions.map((question, index) => (
-    //     <Section {...question} key={index} />
-    //   ))} */}
-    // // </Container>
+    <Container sx={{ textAlign: "center" }}>
+      <Toolbar />
+      <Typography variant="h4" color="textPrimary">
+        Typieeforms
+      </Typography>
+      <Button
+        variant="contained"
+        color="primary"
+        LinkComponent={Link}
+        href="/forms/growthX"
+      >
+        Go to example form
+      </Button>
+    </Container>
   );
 }

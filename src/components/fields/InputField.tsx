@@ -1,5 +1,5 @@
 import { Input } from "@mui/material";
-import { forwardRef, useImperativeHandle } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import { useForm } from "../../hooks/form";
 import { CommonQuestionType, FieldRef } from "../../types";
 
@@ -10,6 +10,7 @@ interface InputFieldProps extends CommonQuestionType {
 export const InputField = forwardRef(
   ({ required, name, type, ...rest }: InputFieldProps, ref) => {
     const { getFormValue, setFormValue } = useForm();
+    const inputRef = useRef<HTMLInputElement>(null);
 
     useImperativeHandle<any, FieldRef>(ref, () => ({
       validate: () => {
@@ -20,14 +21,16 @@ export const InputField = forwardRef(
       },
     }));
 
+    useEffect(() => {
+      inputRef.current?.focus();
+      inputRef.current!.value = getFormValue(name);
+    }, [name]);
+
     return (
       <Input
         fullWidth
-        defaultValue={getFormValue(name)}
-        autoFocus
-        sx={{
-          fontSize: "30px",
-        }}
+        inputRef={inputRef}
+        sx={{ fontSize: "30px" }}
         placeholder="Type your answer here..."
         {...rest}
         onChange={(event) => {
