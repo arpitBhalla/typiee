@@ -49,7 +49,7 @@ export const Form = ({ questions }: FormProps) => {
       // console.log("invalid", validationError);
       setError(validationError);
       return;
-    } else {
+    } else if (error) {
       setError("");
     }
     containerRef.current!.style.animationDirection = isUp
