@@ -11,7 +11,7 @@ export interface SingleSelectProps extends CommonQuestionType {
 
 export const SingleSelectField = forwardRef(
   ({ options, name, required }: SingleSelectProps, ref) => {
-    const { getFormValue, setFormValue } = useForm();
+    const { getFormValue, setFormValue, gotoNextQuestion } = useForm();
 
     useImperativeHandle<any, FieldRef>(ref, () => ({
       validate: () => {
@@ -33,6 +33,7 @@ export const SingleSelectField = forwardRef(
             defaultChecked={option === getFormValue(name)}
             onChange={(ev) => {
               setFormValue(name, ev.target.value);
+              gotoNextQuestion();
             }}
           />
         ))}

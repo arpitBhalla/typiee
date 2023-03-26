@@ -73,8 +73,17 @@ export const Form = ({ questions }: FormProps) => {
     }, 250);
   };
 
+  const gotoNextQuestion = () => {
+    setTimeout(() => {
+      onSwipeHandler("down");
+    }, 500);
+  };
+  console.log(getFormValues());
+
   return (
-    <FormContext.Provider value={{ getFormValue, getFormValues, setFormValue }}>
+    <FormContext.Provider
+      value={{ getFormValue, getFormValues, setFormValue, gotoNextQuestion }}
+    >
       <LinearProgress
         sx={{ backgroundColor: "transparent" }}
         variant="determinate"

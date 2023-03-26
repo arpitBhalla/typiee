@@ -20,7 +20,10 @@ export interface DropdownProps extends CommonQuestionType {
 
 export const DropdownField = forwardRef(
   ({ name, required }: DropdownProps, ref) => {
-    const { getFormValue, setFormValue } = useForm();
+    const { getFormValue, setFormValue, gotoNextQuestion } = useForm();
+    const [value, setValue] = useState("");
+    const [open, setOpen] = useState(false);
+    const [options, setOptions] = useState<string[]>(defaultOptions);
 
     useImperativeHandle<any, FieldRef>(ref, () => ({
       validate: () => {
@@ -32,15 +35,8 @@ export const DropdownField = forwardRef(
     }));
 
     useEffect(() => {
-      // inputRef.current!.value = getFormValue(name);
+      setValue(getFormValue(name));
     }, [name]);
-
-    const inputRef = useRef<HTMLInputElement>(null);
-    const autoCompleteRef = useRef<HTMLInputElement>(null);
-
-    const [value, setValue] = useState("");
-    const [open, setOpen] = useState(false);
-    const [options, setOptions] = useState<string[]>(defaultOptions);
 
     return (
       <Box position={"relative"}>
@@ -57,7 +53,6 @@ export const DropdownField = forwardRef(
             setOptions(filteredOptions);
           }}
           placeholder="Type your answer here..."
-          inputRef={inputRef}
           InputProps={{
             onFocus: () => {
               setOpen(true);
@@ -110,6 +105,7 @@ export const DropdownField = forwardRef(
               onChange={(ev) => {
                 setValue(ev.target.value);
                 setFormValue(name, ev.target.value);
+                gotoNextQuestion();
               }}
             />
           ))}

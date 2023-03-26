@@ -32,42 +32,42 @@ export const questions: QuestionType[] = [
   //     icon: "done",
   //   },
   // },
-  {
-    title: "What industry is your company in?",
-    required: true,
-    summary: "We will personalize your learning experience accordingly",
-    type: "dropdown",
-    name: "industry",
-    action: {
-      title: "Ok",
-      icon: "done",
-    },
-    options: [
-      "Founder or CXO",
-      "Product team",
-      "Marketing team",
-      "VC",
-      "Other",
-    ],
-  },
-  {
-    title: "Your role in your company?",
-    summary: "We want to understand how you spend your time right now.",
-    required: true,
-    type: "single",
-    name: "role",
-    action: {
-      title: "Ok",
-      icon: "done",
-    },
-    options: [
-      "Founder or CXO",
-      "Product team",
-      "Marketing team",
-      "VC",
-      "Other",
-    ],
-  },
+  // {
+  //   title: "What industry is your company in?",
+  //   required: true,
+  //   summary: "We will personalize your learning experience accordingly",
+  //   type: "dropdown",
+  //   name: "industry",
+  //   action: {
+  //     title: "Ok",
+  //     icon: "done",
+  //   },
+  //   options: [
+  //     "Founder or CXO",
+  //     "Product team",
+  //     "Marketing team",
+  //     "VC",
+  //     "Other",
+  //   ],
+  // },
+  // {
+  //   title: "Your role in your company?",
+  //   summary: "We want to understand how you spend your time right now.",
+  //   required: true,
+  //   type: "single",
+  //   name: "role",
+  //   action: {
+  //     title: "Ok",
+  //     icon: "done",
+  //   },
+  //   options: [
+  //     "Founder or CXO",
+  //     "Product team",
+  //     "Marketing team",
+  //     "VC",
+  //     "Other",
+  //   ],
+  // },
   {
     title:
       "{{firstName}}, what's your professional goal for the next 12 months?",

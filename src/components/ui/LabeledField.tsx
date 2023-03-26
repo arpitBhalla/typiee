@@ -7,7 +7,7 @@ import { If } from "./If";
 const checkedColor = grey[50];
 const unCheckedColor = grey[600];
 
-const Label = styled("label")(({ theme }) => ({
+const Label = styled("label")({
   display: "inline-flex",
   gap: 8,
   position: "relative",
@@ -52,7 +52,14 @@ const Label = styled("label")(({ theme }) => ({
       display: "block",
     },
   },
-}));
+  "&:has(input:disabled)": {
+    opacity: 0.5,
+    cursor: "default",
+    "&:hover": {
+      backgroundColor: "transparent",
+    },
+  },
+});
 
 export interface LabeledFieldProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -69,6 +76,7 @@ export const LabeledField = ({
   noPlaceholder,
   label,
   labelStyle,
+  disabled,
   ...rest
 }: LabeledFieldProps) => {
   return (
@@ -77,7 +85,7 @@ export const LabeledField = ({
         <span className="index">{placeholder}</span>
       </If>
       <span className="label">{label}</span>
-      <input type={type} checked={checked} {...rest} />
+      <input type={type} checked={checked} disabled={disabled} {...rest} />
       <CheckOutlined htmlColor="white" />
     </Label>
   );
