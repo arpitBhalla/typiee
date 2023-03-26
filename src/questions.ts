@@ -68,30 +68,31 @@ export const questions: QuestionType[] = [
   //     "Other",
   //   ],
   // },
-  {
-    title:
-      "{{firstName}}, what's your professional goal for the next 12 months?",
-    required: true,
-    type: "multi",
-    name: "goal",
-    action: {
-      title: "Ok",
-      icon: "done",
-    },
-    maxSelect: 2,
-    options: [
-      "Get hired",
-      "Get promoted",
-      "Connect with like-minded people",
-      "Structured approach to growth",
-      "Build a growth team",
-    ],
-  },
+  // {
+  //   title:
+  //     "{{firstName}}, what's your professional goal for the next 12 months?",
+  //   required: true,
+  //   type: "multi",
+  //   name: "goal",
+  //   action: {
+  //     title: "Ok",
+  //     icon: "done",
+  //   },
+  //   maxSelect: 2,
+  //   options: [
+  //     "Get hired",
+  //     "Get promoted",
+  //     "Connect with like-minded people",
+  //     "Structured approach to growth",
+  //     "Build a growth team",
+  //   ],
+  // },
   {
     type: "input",
     title: "Email you'd like to register with?",
     name: "email",
-    // validation: "email",
+    validation: "email",
+    required: true,
     summary:
       "We will keep all our communications with you through this email. Do check your spam inbox if you can't find our application received email.",
     action: {

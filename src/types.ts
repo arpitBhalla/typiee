@@ -12,6 +12,7 @@ export interface CommonQuestionType {
     next?: boolean;
     submit?: boolean;
   };
+  validation?: "email" | "phone";
 }
 
 interface Dropdown extends CommonQuestionType {

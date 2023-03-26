@@ -8,7 +8,7 @@ interface InputFieldProps extends CommonQuestionType {
 }
 
 export const InputField = forwardRef(
-  ({ required, name, type, ...rest }: InputFieldProps, ref) => {
+  ({ required, name, type, validation, ...rest }: InputFieldProps, ref) => {
     const { getFormValue, setFormValue } = useForm();
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -17,6 +17,13 @@ export const InputField = forwardRef(
         if (required && !getFormValue(name)) {
           return "Please fill this in";
         }
+        switch (validation) {
+          case "email":
+            if (!getFormValue(name).match(/^[^\s@+]+@[^\s@]+\.[^\s@]+$/)) {
+              return "Please enter a valid email address";
+            }
+        }
+
         return undefined;
       },
     }));

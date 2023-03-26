@@ -1,3 +1,4 @@
+import { Box } from "@mui/material";
 import {
   forwardRef,
   useEffect,
@@ -9,6 +10,7 @@ import { useForm } from "../../hooks/form";
 import { CommonQuestionType, FieldRef } from "../../types";
 import { Checkbox } from "../ui/Checkbox";
 import { FormControl } from "../ui/FormControl";
+import { If } from "../ui/If";
 
 export interface MultiSelectProps extends CommonQuestionType {
   type: "multi";
@@ -41,6 +43,12 @@ export const MultiSelectField = forwardRef(
 
     return (
       <FormControl>
+        <Box height={18}>
+          <If cond={valueSet.current.size < maxSelect}>
+            Choose {maxSelect - valueSet.current.size}
+            <If cond={!!valueSet.current.size}> more</If>
+          </If>
+        </Box>
         {options.map((option, index) => (
           <Checkbox
             disabled={size === maxSelect && !valueSet.current.has(option)}
