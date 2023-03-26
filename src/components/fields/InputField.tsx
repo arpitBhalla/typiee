@@ -1,7 +1,10 @@
 import { Input } from "@mui/material";
+import { Box } from "@mui/system";
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import { useForm } from "../../hooks/form";
 import { CommonQuestionType, FieldRef } from "../../types";
+import { If } from "../ui/If";
+import { PhoneCountryPicker } from "../ui/PhoneCountryPicker";
 
 interface InputFieldProps extends CommonQuestionType {
   type: "email";
@@ -34,16 +37,29 @@ export const InputField = forwardRef(
     }, [name]);
 
     return (
-      <Input
-        fullWidth
-        inputRef={inputRef}
-        sx={{ fontSize: "30px" }}
-        placeholder="Type your answer here..."
-        {...rest}
-        onChange={(event) => {
-          setFormValue(name, event.target.value);
-        }}
-      />
+      <Box display={"flex"}>
+        <If cond={validation === "phone"}>
+          <PhoneCountryPicker
+            defaultValue={getFormValue("__phone-code") as any}
+            onChange={(phoneCode) =>
+              setFormValue("__phone-code", phoneCode as any)
+            }
+          />
+        </If>
+        <Input
+          fullWidth
+          inputRef={inputRef}
+          sx={{
+            fontSize: "30px",
+            // "&::before, &::after, &:hover": { borderBottom: "none" },
+          }}
+          placeholder="Type your answer here..."
+          {...rest}
+          onChange={(event) => {
+            setFormValue(name, event.target.value);
+          }}
+        />
+      </Box>
     );
   }
 );

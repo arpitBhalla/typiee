@@ -2,12 +2,7 @@ import { FormContext } from "@/contexts/FormContext";
 import { useCreateForm } from "@/hooks/form";
 import { FieldRef, QuestionType } from "@/types";
 import styled from "@emotion/styled";
-import {
-  Container as MuiContainer,
-  LinearProgress,
-  Toolbar,
-} from "@mui/material";
-import Image from "next/image";
+import { Container as MuiContainer, LinearProgress } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { Action } from "./Action";
 import { ErrorCard, Section } from "./Section";
@@ -51,7 +46,7 @@ export const Form = ({ questions }: FormProps) => {
 
     const validationError = questionFieldRef.current?.validate();
     if (!isUp && questionFieldRef.current && validationError) {
-      console.log("invalid", validationError);
+      // console.log("invalid", validationError);
       setError(validationError);
       return;
     } else {
@@ -78,7 +73,6 @@ export const Form = ({ questions }: FormProps) => {
       onSwipeHandler("down");
     }, 500);
   };
-  console.log(getFormValues());
 
   return (
     <FormContext.Provider

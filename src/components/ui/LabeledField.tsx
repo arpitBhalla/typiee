@@ -64,7 +64,7 @@ const Label = styled("label")({
 export interface LabeledFieldProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   type?: "radio" | "checkbox";
-  label: string;
+  label: string | React.ReactNode;
   labelStyle?: React.CSSProperties;
   noPlaceholder?: boolean;
 }

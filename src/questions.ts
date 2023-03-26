@@ -87,24 +87,26 @@ export const questions: QuestionType[] = [
   //     "Build a growth team",
   //   ],
   // },
-  {
-    type: "input",
-    title: "Email you'd like to register with?",
-    name: "email",
-    validation: "email",
-    required: true,
-    summary:
-      "We will keep all our communications with you through this email. Do check your spam inbox if you can't find our application received email.",
-    action: {
-      title: "Ok",
-      icon: "done",
-    },
-  },
+  // {
+  //   type: "input",
+  //   title: "Email you'd like to register with?",
+  //   name: "email",
+  //   validation: "email",
+  //   required: true,
+  //   summary:
+  //     "We will keep all our communications with you through this email. Do check your spam inbox if you can't find our application received email.",
+  //   action: {
+  //     title: "Ok",
+  //     icon: "done",
+  //   },
+  // },
   {
     type: "input",
     name: "phone",
-    // variant: "phone",
+    required: true,
+    validation: "phone",
     title: "Your phone number",
+    placeholder: "11 2345 6789",
     summary:
       "We won't call you unless it is absolutely required to process your application.",
     action: {

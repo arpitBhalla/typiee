@@ -1,44 +1,133 @@
-import Autocomplete from "@mui/material/Autocomplete";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
+import { ExpandMore } from "@mui/icons-material";
+import { Box, Button, Input } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Radio } from "./Radio";
 
-export function PhoneInputField() {
-  return (
-    <Autocomplete
-      id="country-select-demo"
-      sx={{ width: 300 }}
-      options={countries}
-      autoHighlight
-      getOptionLabel={(option) => option.label}
-      renderOption={(props, option) => (
-        <Box
-          component="li"
-          sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-          {...props}
-        >
-          <img
-            loading="lazy"
-            width="20"
-            src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-            srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-            alt=""
-          />
-          {option.label} ({option.code}) +{option.phone}
-        </Box>
-      )}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          label="Choose a country"
-          inputProps={{
-            ...params.inputProps,
-            autoComplete: "new-password", // disable autocomplete and autofill
-          }}
-        />
-      )}
-    />
-  );
+interface PhoneCountryPickerProps {
+  defaultValue?: CountryType;
+  onChange?: (phone: CountryType) => void;
 }
+
+const DefaultCountry = {
+  code: "in",
+  label: "India",
+  phone: "91",
+  suggested: true,
+};
+
+export const PhoneCountryPicker = ({
+  onChange,
+  defaultValue = DefaultCountry,
+}: PhoneCountryPickerProps) => {
+  const [search, setSearch] = useState("");
+  const [open, setOpen] = useState(false);
+  const [options, setOptions] = useState(countries);
+
+  const [value, setValue] = useState<CountryType>(defaultValue);
+
+  useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue]);
+
+  return (
+    <Box
+      position="relative"
+      component="div"
+      mr={2}
+      onWheel={(e) => e.stopPropagation()}
+    >
+      <Button
+        variant="text"
+        color="inherit"
+        endIcon={<ExpandMore />}
+        size="large"
+        disableRipple
+        onClick={() => setOpen(!open)}
+        sx={{
+          minWidth: 0,
+          px: 0.1,
+          height: "100%",
+          borderBottom: "2px solid #ababab",
+          borderRadius: 0,
+          "&:focus, &:hover": {
+            borderBottom: "2px solid white",
+          },
+        }}
+      >
+        <Flag code={value.code || "in"} />
+      </Button>
+      {open ? (
+        <Box
+          display={"block"}
+          width={"100%"}
+          height="100%"
+          position={"fixed"}
+          top={0}
+          left={0}
+          onClick={() => setOpen(false)}
+        />
+      ) : null}
+      <Box
+        position={"absolute"}
+        bgcolor="background.paper"
+        zIndex={100}
+        top={0}
+        border="solid 2px white"
+        p={1}
+        borderRadius={"8px"}
+        display={open ? "block" : "none"}
+        width={"300px"}
+      >
+        <Input
+          fullWidth
+          value={search}
+          autoComplete="off"
+          onChange={(event) => {
+            setSearch(event.target.value);
+            const filteredOptions = countries.filter((option) =>
+              option.label
+                .toLowerCase()
+                .includes(event.target.value.toLowerCase())
+            );
+            setOptions(filteredOptions);
+          }}
+          sx={{
+            fontSize: "28px",
+            borderBottom: "none",
+            "&::before, &::after, &:hover": { border: "none" },
+          }}
+          placeholder="Search Countries"
+        />
+        <Box maxHeight={"200px"} overflow="scroll" py={2}>
+          {options.map((option, index) => (
+            <Radio
+              key={index}
+              labelStyle={{ marginBottom: 4, width: "100%" }}
+              noPlaceholder
+              name={"phone-code"}
+              label={
+                <div style={{ display: "flex" }}>
+                  <div style={{ flexGrow: 1 }}>
+                    <Flag code={option.code} /> {option.label}
+                  </div>
+                  <div>+{option.phone}</div>
+                </div>
+              }
+              value={option.phone}
+              onChange={() => {
+                onChange?.(option);
+                setValue(option);
+                setTimeout(() => {
+                  setOpen(false);
+                }, 500);
+              }}
+            />
+          ))}
+        </Box>
+      </Box>
+    </Box>
+  );
+};
 
 interface CountryType {
   code: string;
@@ -472,3 +561,15 @@ const countries: readonly CountryType[] = [
   { code: "ZM", label: "Zambia", phone: "260" },
   { code: "ZW", label: "Zimbabwe", phone: "263" },
 ];
+
+function Flag(props: Partial<CountryType>) {
+  return (
+    <img
+      loading="lazy"
+      width="20"
+      src={`https://flagcdn.com/w20/${props.code?.toLowerCase()}.png`}
+      srcSet={`https://flagcdn.com/w40/${props.code?.toLowerCase()}.png 2x`}
+      alt=""
+    />
+  );
+}
