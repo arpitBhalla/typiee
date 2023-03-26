@@ -8,20 +8,20 @@ import { Toolbar } from "@mui/material";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
 
-export const getServerSideProps: GetServerSideProps = async ({}) => {
-  // some server side fetching
-  return {
-    props: {
-      questions: defaultQuestions,
-    },
-  };
-};
+// export const getServerSideProps: GetServerSideProps = async ({}) => {
+//   // some server side fetching
+//   return {
+//     props: {
+//       questions: defaultQuestions,
+//     },
+//   };
+// };
 
 interface FormIndex {
   questions: QuestionType[];
 }
 
-export default function Home({ questions }: FormIndex) {
+export default function Home({ questions = defaultQuestions }: FormIndex) {
   const { isLoading = false } = {} || useWait();
   return (
     <>
