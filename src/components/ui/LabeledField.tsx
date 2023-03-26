@@ -2,6 +2,7 @@ import { CheckOutlined } from "@mui/icons-material";
 import { styled } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React from "react";
+import { If } from "./If";
 
 const checkedColor = grey[50];
 const unCheckedColor = grey[600];
@@ -57,18 +58,24 @@ export interface LabeledFieldProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   type?: "radio" | "checkbox";
   label: string;
+  labelStyle?: React.CSSProperties;
+  noPlaceholder?: boolean;
 }
 
 export const LabeledField = ({
   type = "checkbox",
   checked,
   placeholder,
+  noPlaceholder,
   label,
+  labelStyle,
   ...rest
 }: LabeledFieldProps) => {
   return (
-    <Label>
-      <span className="index">{placeholder}</span>
+    <Label style={labelStyle}>
+      <If cond={!noPlaceholder}>
+        <span className="index">{placeholder}</span>
+      </If>
       <span className="label">{label}</span>
       <input type={type} checked={checked} {...rest} />
       <CheckOutlined htmlColor="white" />

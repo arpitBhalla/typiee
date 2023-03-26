@@ -80,9 +80,7 @@ export const Form = ({ questions }: FormProps) => {
         variant="determinate"
         value={(index * 100) / totalIndex}
       />
-      <Toolbar sx={{ position: "fixed" }} className="renderer-in">
-        <Image src="/logo.png" width={100} height={24} alt="logo" />
-      </Toolbar>
+
       <If cond={index < questions.length}>
         <Swipe onSwipe={onSwipeHandler}>
           <Container ref={containerRef}>

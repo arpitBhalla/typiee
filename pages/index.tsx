@@ -1,7 +1,7 @@
+import { Toolbar, Typography } from "@mui/material";
+import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Link from "next/link";
-import Button from "@mui/material/Button";
-import { Toolbar, Typography } from "@mui/material";
 
 export default function Home() {
   return (

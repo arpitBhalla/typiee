@@ -1,37 +1,37 @@
 import { QuestionType } from "./types";
 
 export const questions: QuestionType[] = [
-  {
-    title: "Up-skilling requires time commitment",
-    type: "info",
-    name: "info",
-    summary: `The GrowthX experience is designed by keeping in mind the working hours founders & full time operators typically work in.\n\nYou will spend\n- 6 hours/week for the first 5 weeks\n- 15 hours/week for the last 3 weeks`,
-    action: {
-      title: "I agree",
-      icon: "none",
-      next: true,
-    },
-  },
-  {
-    title: "What's your first name?",
-    required: true,
-    name: "firstName",
-    type: "input",
-    action: {
-      title: "Ok",
-      icon: "done",
-    },
-  },
-  {
-    title: "and your last name, {{firstName}}?",
-    required: true,
-    name: "lastName",
-    type: "input",
-    action: {
-      title: "Ok",
-      icon: "done",
-    },
-  },
+  // {
+  //   title: "Up-skilling requires time commitment",
+  //   type: "info",
+  //   name: "info",
+  //   summary: `The GrowthX experience is designed by keeping in mind the working hours founders & full time operators typically work in.\n\nYou will spend\n- 6 hours/week for the first 5 weeks\n- 15 hours/week for the last 3 weeks`,
+  //   action: {
+  //     title: "I agree",
+  //     icon: "none",
+  //     next: true,
+  //   },
+  // },
+  // {
+  //   title: "What's your first name?",
+  //   required: true,
+  //   name: "firstName",
+  //   type: "input",
+  //   action: {
+  //     title: "Ok",
+  //     icon: "done",
+  //   },
+  // },
+  // {
+  //   title: "and your last name, {{firstName}}?",
+  //   required: true,
+  //   name: "lastName",
+  //   type: "input",
+  //   action: {
+  //     title: "Ok",
+  //     icon: "done",
+  //   },
+  // },
   {
     title: "What industry is your company in?",
     required: true,
