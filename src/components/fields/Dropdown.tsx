@@ -1,4 +1,3 @@
-import { a } from "@/a";
 import { CloseOutlined, ExpandLess, ExpandMore } from "@mui/icons-material";
 import { Box, IconButton, styled, TextField } from "@mui/material";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
@@ -13,7 +12,7 @@ export interface DropdownProps extends CommonQuestionType {
 }
 
 export const DropdownField = forwardRef(
-  ({ name, required, options: defaultOptions = a }: DropdownProps, ref) => {
+  ({ name, required, options: defaultOptions }: DropdownProps, ref) => {
     const { getFormValue, setFormValue, gotoNextQuestion } = useForm();
     const [value, setValue] = useState("");
     const [open, setOpen] = useState(false);

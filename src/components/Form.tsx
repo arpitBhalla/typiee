@@ -74,6 +74,8 @@ export const Form = ({ questions }: FormProps) => {
     }, 500);
   };
 
+  console.log(getFormValues());
+
   return (
     <FormContext.Provider
       value={{ getFormValue, getFormValues, setFormValue, gotoNextQuestion }}
