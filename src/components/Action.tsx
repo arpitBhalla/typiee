@@ -1,5 +1,10 @@
 import { CheckOutlined } from "@mui/icons-material";
-import { Button as MuiButton, Typography } from "@mui/material";
+import {
+  Button as MuiButton,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
+import { useState } from "react";
 import { CommonQuestionType } from "../types";
 import { If } from "./ui/If";
 
@@ -12,13 +17,25 @@ export const Action = ({
 }: CommonQuestionType["action"] & {
   onClick: any;
 }) => {
+  const [loading, setLoading] = useState(false);
   return (
     <div>
-      <MuiButton onClick={onClick} variant="contained" disableRipple>
+      <MuiButton
+        disabled={loading}
+        onClick={() => {
+          onClick?.();
+          if (submit) setLoading(true);
+        }}
+        variant="contained"
+        disableRipple
+      >
         <Typography variant="body1" color="textPrimary">
           <b>{title}</b>
         </Typography>
         {icon === "done" ? <CheckOutlined fontSize="small" /> : null}
+        <If cond={loading}>
+          <CircularProgress size={16} sx={{ ml: 1 }} color="inherit" />
+        </If>
       </MuiButton>
       {next || submit ? (
         <Typography variant="caption" color="textPrimary" sx={{ ml: 2 }}>

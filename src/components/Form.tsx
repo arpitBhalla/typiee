@@ -2,7 +2,11 @@ import { FormContext } from "@/contexts/FormContext";
 import { useCreateForm } from "@/hooks/form";
 import { FieldRef, QuestionType } from "@/types";
 import styled from "@emotion/styled";
-import { Container as MuiContainer, LinearProgress } from "@mui/material";
+import {
+  Container as MuiContainer,
+  LinearProgress,
+  Typography,
+} from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { Action } from "./Action";
 import { ErrorCard, Section } from "./Section";
@@ -40,18 +44,34 @@ export const Form = ({ questions }: FormProps) => {
   const currentQuestion = questions[index];
   const totalIndex = questions.length;
 
+  const submitForm = () => {
+    fetch("/api/email", {
+      method: "POST",
+      body: JSON.stringify(getFormValues(), (_key, value) =>
+        // @ts-ignore
+        value instanceof Set ? [...value].join(", ") : value
+      ),
+    }).then(() => {
+      setIndex((prevIndex) => prevIndex + 1);
+    });
+  };
+
+  const clearError = () => {
+    if (error) setError("");
+  };
+
   const onSwipeHandler = (dir: "up" | "down"): void => {
     const isUp = dir === "up";
     if (!index && isUp) return;
 
     const validationError = questionFieldRef.current?.validate();
     if (!isUp && questionFieldRef.current && validationError) {
-      // console.log("invalid", validationError);
       setError(validationError);
       return;
-    } else if (error) {
-      setError("");
+    } else {
+      clearError();
     }
+
     containerRef.current!.style.animationDirection = isUp
       ? "reverse"
       : "normal";
@@ -61,6 +81,10 @@ export const Form = ({ questions }: FormProps) => {
       containerRef.current!.style.animationName = isUp ? "slideOut" : "slideIn";
 
       setIndex((prevIndex) => {
+        if (prevIndex === totalIndex - 1 && !isUp) {
+          submitForm();
+          return prevIndex;
+        }
         const newIndex = prevIndex + (isUp ? -1 : 1);
         if (newIndex < 0 || prevIndex >= totalIndex) return prevIndex;
         return newIndex;
@@ -74,11 +98,25 @@ export const Form = ({ questions }: FormProps) => {
     }, 500);
   };
 
-  console.log(getFormValues());
+  if (index === totalIndex) {
+    return (
+      <Container>
+        <Typography variant="h5" color="textPrimary">
+          All done! Thanks for your time.
+        </Typography>
+      </Container>
+    );
+  }
 
   return (
     <FormContext.Provider
-      value={{ getFormValue, getFormValues, setFormValue, gotoNextQuestion }}
+      value={{
+        getFormValue,
+        getFormValues,
+        setFormValue,
+        gotoNextQuestion,
+        clearError,
+      }}
     >
       <LinearProgress
         sx={{ backgroundColor: "transparent" }}
@@ -92,7 +130,11 @@ export const Form = ({ questions }: FormProps) => {
             <Section ref={questionFieldRef} question={currentQuestion} />
             <If cond={!error && !!currentQuestion}>
               <Action
-                onClick={() => onSwipeHandler("down")}
+                onClick={
+                  currentQuestion?.action.submit
+                    ? submitForm
+                    : onSwipeHandler.bind(null, "down")
+                }
                 next={currentQuestion?.type === "input"}
                 {...currentQuestion?.action}
               />

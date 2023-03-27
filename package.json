@@ -16,10 +16,15 @@
     "@emotion/styled": "latest",
     "@mui/icons-material": "latest",
     "@mui/material": "latest",
+    "@react-email/components": "^0.0.4",
+    "@types/nodemailer": "^6.4.7",
     "lethargy": "^1.0.9",
     "next": "latest",
+    "nodemailer": "^6.9.1",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "react-email": "^1.9.0",
+    "yup": "^1.0.2"
   },
   "devDependencies": {
     "@types/node": "latest",

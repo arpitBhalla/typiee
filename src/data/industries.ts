@@ -1,4 +1,4 @@
-export const a = [
+export const industries = [
   "Accounting",
   "Airlines/Aviation",
   "Alternative Dispute Resolution",

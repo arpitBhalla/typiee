@@ -12,7 +12,7 @@ interface InputFieldProps extends CommonQuestionType {
 
 export const InputField = forwardRef(
   ({ required, name, type, validation, ...rest }: InputFieldProps, ref) => {
-    const { getFormValue, setFormValue } = useForm();
+    const { getFormValue, setFormValue, clearError } = useForm();
     const inputRef = useRef<HTMLInputElement>(null);
 
     useImperativeHandle<any, FieldRef>(ref, () => ({
@@ -25,6 +25,12 @@ export const InputField = forwardRef(
             if (!getFormValue(name).match(/^[^\s@+]+@[^\s@]+\.[^\s@]+$/)) {
               return "Please enter a valid email address";
             }
+            break;
+          case "phone":
+            if (!getFormValue(name).match(/^(\d){10}$/)) {
+              return "Hmm... that phone number doesn't look right";
+            }
+            break;
         }
 
         return undefined;
@@ -49,14 +55,12 @@ export const InputField = forwardRef(
         <Input
           fullWidth
           inputRef={inputRef}
-          sx={{
-            fontSize: "30px",
-            // "&::before, &::after, &:hover": { borderBottom: "none" },
-          }}
+          sx={{ fontSize: "30px" }}
           placeholder="Type your answer here..."
           {...rest}
           onChange={(event) => {
             setFormValue(name, event.target.value);
+            clearError();
           }}
         />
       </Box>

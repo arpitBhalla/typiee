@@ -20,7 +20,7 @@ export interface MultiSelectProps extends CommonQuestionType {
 
 export const MultiSelectField = forwardRef(
   ({ options, maxSelect, name, required }: MultiSelectProps, ref) => {
-    const { getFormValue, setFormValue } = useForm();
+    const { getFormValue, setFormValue, clearError } = useForm();
 
     const [size, setSize] = useState(0);
     const valueSet = useRef(new Set<string>());
@@ -66,6 +66,7 @@ export const MultiSelectField = forwardRef(
               // @ts-ignore
               setFormValue(name, new Set(valueSet.current));
               setSize(valueSet.current.size);
+              clearError();
             }}
           />
         ))}

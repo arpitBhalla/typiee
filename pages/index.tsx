@@ -2,7 +2,7 @@ import { Form } from "@/components/Form";
 import { Loading } from "@/components/Loading";
 import { If } from "@/components/ui/If";
 import { useWait } from "@/hooks/useWait";
-import { questions as defaultQuestions } from "@/questions";
+import { questions as defaultQuestions } from "@/data/questions";
 import { QuestionType } from "@/types";
 import { Toolbar } from "@mui/material";
 import { GetServerSideProps } from "next";

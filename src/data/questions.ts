@@ -1,6 +1,6 @@
-import { QuestionType } from "./types";
+import { QuestionType } from "../types";
 
-import { a } from "@/a";
+import { industries } from "@/data/industries";
 
 export const questions: QuestionType[] = [
   {
@@ -44,7 +44,7 @@ export const questions: QuestionType[] = [
       title: "Ok",
       icon: "done",
     },
-    options: a,
+    options: industries,
   },
   {
     title: "Your role in your company?",
