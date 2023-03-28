@@ -31,6 +31,13 @@ export default async function handler(
       return;
     }
 
+    await fetch(process.env.SAVE_URL || "", {
+      method: "POST",
+      body: JSON.stringify(body),
+    })
+      .then((r) => r.json())
+      .then(console.log);
+
     if (process.env.NODE_ENV !== "production") {
       const mailAcc = await nodemailer.createTestAccount();
 

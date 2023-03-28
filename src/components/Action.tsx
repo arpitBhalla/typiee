@@ -4,7 +4,7 @@ import {
   Typography,
   CircularProgress,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CommonQuestionType } from "../types";
 import { If } from "./ui/If";
 
@@ -18,9 +18,35 @@ export const Action = ({
   onClick: any;
 }) => {
   const [loading, setLoading] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const listener = (ev: KeyboardEvent) => {
+      const isMeta = ev.metaKey || ev.ctrlKey;
+
+      if (submit) {
+        if (isMeta && ev.code == "Enter") {
+          // buttonRef.current?.click();
+          console.log("Enter+ cmd");
+        }
+      } else {
+        if (ev.code == "Enter") {
+          buttonRef.current?.click();
+          console.log("Enter");
+        }
+      }
+    };
+    window.addEventListener("keydown", listener);
+
+    return () => {
+      window.removeEventListener("keydown", listener);
+    };
+  }, []);
+
   return (
     <div>
       <MuiButton
+        ref={buttonRef}
         disabled={loading}
         onClick={() => {
           onClick?.();

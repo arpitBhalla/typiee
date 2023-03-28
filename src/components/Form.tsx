@@ -28,19 +28,6 @@ export const Form = ({ questions }: FormProps) => {
   const questionFieldRef = useRef<FieldRef>();
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const listener = (ev: KeyboardEvent) => {
-      if (ev.code == "Enter") {
-        onSwipeHandler("down");
-      }
-    };
-    window.addEventListener("keydown", listener);
-
-    return () => {
-      window.removeEventListener("keydown", listener);
-    };
-  }, []);
-
   const currentQuestion = questions[index];
   const totalIndex = questions.length;
 
@@ -70,6 +57,11 @@ export const Form = ({ questions }: FormProps) => {
       return;
     } else {
       clearError();
+    }
+
+    if (index === totalIndex - 1 && !isUp) {
+      submitForm();
+      return;
     }
 
     containerRef.current!.style.animationDirection = isUp
