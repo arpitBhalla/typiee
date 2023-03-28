@@ -1,21 +1,24 @@
 import { CheckOutlined } from "@mui/icons-material";
 import {
   Button as MuiButton,
-  Typography,
   CircularProgress,
+  Typography,
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
-import { CommonQuestionType } from "../types";
+import { QuestionType } from "../types";
 import { If } from "./ui/If";
 
 export const Action = ({
-  icon,
-  title,
-  next,
-  submit,
   onClick,
-}: CommonQuestionType["action"] & {
-  onClick: any;
+  onFormSubmit,
+  question: {
+    type,
+    action: { icon, title, next = type === "input", submit },
+  },
+}: {
+  onClick: () => void;
+  onFormSubmit: () => void;
+  question: QuestionType;
 }) => {
   const [loading, setLoading] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -26,13 +29,11 @@ export const Action = ({
 
       if (submit) {
         if (isMeta && ev.code == "Enter") {
-          // buttonRef.current?.click();
-          console.log("Enter+ cmd");
+          buttonRef.current?.click();
         }
       } else {
         if (ev.code == "Enter") {
           buttonRef.current?.click();
-          console.log("Enter");
         }
       }
     };
@@ -41,7 +42,7 @@ export const Action = ({
     return () => {
       window.removeEventListener("keydown", listener);
     };
-  }, []);
+  }, [submit]);
 
   return (
     <div>
@@ -49,8 +50,12 @@ export const Action = ({
         ref={buttonRef}
         disabled={loading}
         onClick={() => {
-          onClick?.();
-          if (submit) setLoading(true);
+          if (submit) {
+            onFormSubmit();
+            setLoading(true);
+          } else {
+            onClick?.();
+          }
         }}
         variant="contained"
         disableRipple

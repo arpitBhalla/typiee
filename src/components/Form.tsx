@@ -7,7 +7,7 @@ import {
   LinearProgress,
   Typography,
 } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Action } from "./Action";
 import { ErrorCard, Section } from "./Section";
 import { If } from "./ui/If";
@@ -35,7 +35,6 @@ export const Form = ({ questions }: FormProps) => {
     fetch("/api/email", {
       method: "POST",
       body: JSON.stringify(getFormValues(), (_key, value) =>
-        // @ts-ignore
         value instanceof Set ? [...value].join(", ") : value
       ),
     }).then(() => {
@@ -51,6 +50,7 @@ export const Form = ({ questions }: FormProps) => {
     const isUp = dir === "up";
     if (!index && isUp) return;
 
+    // Validate the field
     const validationError = questionFieldRef.current?.validate();
     if (!isUp && questionFieldRef.current && validationError) {
       setError(validationError);
@@ -59,8 +59,8 @@ export const Form = ({ questions }: FormProps) => {
       clearError();
     }
 
+    // Last question of form
     if (index === totalIndex - 1 && !isUp) {
-      submitForm();
       return;
     }
 
@@ -73,10 +73,6 @@ export const Form = ({ questions }: FormProps) => {
       containerRef.current!.style.animationName = isUp ? "slideOut" : "slideIn";
 
       setIndex((prevIndex) => {
-        if (prevIndex === totalIndex - 1 && !isUp) {
-          submitForm();
-          return prevIndex;
-        }
         const newIndex = prevIndex + (isUp ? -1 : 1);
         if (newIndex < 0 || prevIndex >= totalIndex) return prevIndex;
         return newIndex;
@@ -90,6 +86,7 @@ export const Form = ({ questions }: FormProps) => {
     }, 500);
   };
 
+  // Show thankyou message when form is submitted
   if (index === totalIndex) {
     return (
       <Container>
@@ -122,13 +119,11 @@ export const Form = ({ questions }: FormProps) => {
             <Section ref={questionFieldRef} question={currentQuestion} />
             <If cond={!error && !!currentQuestion}>
               <Action
-                onClick={
-                  currentQuestion?.action.submit
-                    ? submitForm
-                    : onSwipeHandler.bind(null, "down")
-                }
-                next={currentQuestion?.type === "input"}
-                {...currentQuestion?.action}
+                question={currentQuestion}
+                onFormSubmit={submitForm}
+                onClick={onSwipeHandler.bind(null, "down")}
+                // next={currentQuestion?.type === "input"}
+                // {...currentQuestion?.action}
               />
             </If>
             <If cond={!!error}>

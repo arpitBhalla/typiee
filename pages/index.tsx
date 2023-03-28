@@ -22,7 +22,7 @@ interface FormIndex {
 }
 
 export default function Home({ questions = defaultQuestions }: FormIndex) {
-  const { isLoading = false } = {} || useWait();
+  const { isLoading = false } = useWait();
   return (
     <>
       <Loading isLoading={isLoading} />
