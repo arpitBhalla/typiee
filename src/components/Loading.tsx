@@ -10,7 +10,10 @@ export function Loading({ isLoading }: { isLoading: boolean }) {
         zIndex: (theme) => theme.zIndex.drawer + 1,
       }}
     >
-      <Container sx={{ textAlign: "center", maxWidth: "14em" }}>
+      <Container
+        sx={{ textAlign: "center", maxWidth: "12em" }}
+        maxWidth={false}
+      >
         <Image src="/logo.png" width={100} height={24} alt="logo" />
         <LinearProgress
           color="inherit"
