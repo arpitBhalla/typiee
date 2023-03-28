@@ -50,7 +50,7 @@ export const Form = ({ questions }: FormProps) => {
     const isUp = dir === "up";
     if (!index && isUp) return;
 
-    // Validate the field
+    // Validate the field and show error message
     const validationError = questionFieldRef.current?.validate();
     if (!isUp && questionFieldRef.current && validationError) {
       setError(validationError);
@@ -59,19 +59,18 @@ export const Form = ({ questions }: FormProps) => {
       clearError();
     }
 
-    // Last question of form
+    // Do nothing if it's last question of form
     if (index === totalIndex - 1 && !isUp) {
       return;
     }
-
-    containerRef.current!.style.animationDirection = isUp
-      ? "reverse"
-      : "normal";
-    containerRef.current!.style.animationName = isUp ? "slideIn" : "slideOut";
+    containerRef.current!.animate(keyFrames, {
+      duration: 600,
+      fill: "forwards",
+      direction: isUp ? "reverse" : "normal",
+      easing: "ease-in-out",
+    });
 
     setTimeout(() => {
-      containerRef.current!.style.animationName = isUp ? "slideOut" : "slideIn";
-
       setIndex((prevIndex) => {
         const newIndex = prevIndex + (isUp ? -1 : 1);
         if (newIndex < 0 || prevIndex >= totalIndex) return prevIndex;
@@ -122,8 +121,6 @@ export const Form = ({ questions }: FormProps) => {
                 question={currentQuestion}
                 onFormSubmit={submitForm}
                 onClick={onSwipeHandler.bind(null, "down")}
-                // next={currentQuestion?.type === "input"}
-                // {...currentQuestion?.action}
               />
             </If>
             <If cond={!!error}>
@@ -147,3 +144,11 @@ const Container = styled(MuiContainer)({
   animationFillMode: "forwards",
   animationTimingFunction: "ease-out",
 });
+
+const keyFrames = [
+  { opacity: 1, transform: "translateY(0px)" },
+  { opacity: 0, transform: "translateY(-200px)" },
+  { opacity: 0 },
+  { opacity: 0, transform: "translateY(200px)" },
+  { opacity: 1, transform: "translateY(0px)" },
+];
